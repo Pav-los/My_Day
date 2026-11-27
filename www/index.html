@@ -22,26 +22,32 @@ nav button{flex:1;border:0;border-radius:0;background:none;color:var(--m);paddin
 const $=s=>document.querySelector(s),esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const dk=d=>d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"),T=()=>dk(new Date());
 const pd=k=>new Date(k+"T12:00:00"),add=(k,n)=>{const d=pd(k);d.setDate(d.getDate()+n);return dk(d)},mon=k=>add(k,-((pd(k).getDay()+6)%7)),wk=()=>mon(cur);
-const tom=()=>add(cur,1),pct=x=>Math.round(x*100)+"%",TG=[3000,3,300,200];
-const ds=k=>{const d=D.d[k];if(!d)return 0;const g=d.gd.reduce((a,b)=>a+b,0)/3,h=H.filter(x=>d.h[x[0]]).length/H.length,c=(C.reduce((a,x,i)=>a+Math.min(1,(d.c[x[0]]||0)/TG[i]),0)+(d.cmb>=0?d.t.reduce((a,b)=>a+b,0)/3:0))/5;return .5*g+.25*h+.25*c},star=k=>ds(k)>.999;
+const tom=()=>add(cur,1),pct=x=>Math.round(x*100)+"%",TG=[2000,3,300,200];
+const ds=k=>{const d=D.d[k];if(!d)return 0;const g=Math.min(1,(d.gd[0]+d.gd[1]+d.gd[2])/3+.1*(d.gd[3]|0)),h=H.filter(x=>d.h[x[0]]).length/H.length,c=(C.reduce((a,x,i)=>a+Math.min(1,(d.c[x[0]]||0)/TG[i]),0)+(O[d.cmb]?(d.t[0]+d.t[1])/2:0))/5;return .5*g+.25*h+.25*c},star=k=>ds(k)>.999;
 const ws=m=>{const t=T();let n=0,s=0;for(let i=0;i<7;i++){const k=add(m,i);if(k>t)break;s+=ds(k);n++}const w=D.w[m]||{},wh=W.reduce((a,x)=>a+Math.min(1,(w[x[0]]||0)/x[2]),0)/W.length;return .25*wh+.75*(n?s/n:0)};
 const ms=(y,m)=>{const f=dk(new Date(y,m,1)),l=dk(new Date(y,m+1,0)),t=T(),a=[];for(let w=mon(f);w<=l&&w<=t;w=add(w,7))a.push(ws(w));return a.length?a.reduce((x,y)=>x+y,0)/a.length:0};
 const sc=()=>{const d=pd(cur);return`Day ${pct(ds(cur))} · Week ${pct(ws(mon(cur)))} · Month ${pct(ms(d.getFullYear(),d.getMonth()))}`};
 const nav=()=>`<div class="r"><button data-a="dy" data-n="-1">‹</button><h1 style="flex:1;text-align:center;font-size:18px">${cur==T()?"Today, ":""}${pd(cur).toLocaleDateString("en-GB",{weekday:"short",day:"numeric",month:"short"})}${star(cur)?" ★":""}</h1><button data-a="dy" data-n="1">›</button></div>${cur==T()?"":`<div class="r"><button data-a="go" data-s="${T()}" style="flex:1">Back to today</button></div>`}`;
 const cal=()=>{if(!cm){const d=pd(cur);cm=[d.getFullYear(),d.getMonth()]}const[y,m]=cm,n=new Date(y,m+1,0).getDate(),o=(new Date(y,m,1).getDay()+6)%7,t=T();let c=["M","T","W","T","F","S","S"].map(x=>`<span class="m" style="text-align:center">${x}</span>`).join("");for(let i=0;i<o;i++)c+="<span></span>";for(let i=1;i<=n;i++){const k=dk(new Date(y,m,i));c+=`<button class="cl ${k==cur?"on":""}" data-a="go" data-s="${k}">${i}<small>${k<=t&&ds(k)>0?pct(ds(k)):""}</small>${star(k)?"<b>★</b>":""}</button>`}return`<div class="card"><div class="r"><button data-a="cm" data-n="-1">‹</button><h2 style="flex:1;text-align:center;margin:0">${new Date(y,m,1).toLocaleDateString("en-GB",{month:"long",year:"numeric"})}</h2><button data-a="cm" data-n="1">›</button></div><p class="sub" style="text-align:center">Month score ${pct(ms(y,m))}</p><div class="g">${c}</div></div>`};
 const H=[["vd","Vitamin D"],["mg","Magnesium"],["cr","Creatine"],["wa","Walk, be active, don’t sit all day"],["cs","Cold shower"],["rd","Read a book before bed"]];
-const C=[["water","Water","ml",250,3000,"3000"],["eggs","Eggs","",1,4,"3–4"],["yog","Yogurt","g",100,500,"300–500"],["veg","Vegetables","g",100,500,"200–500"]];
+const C=[["water","Water","ml",250,3000,"2000–3000"],["eggs","Eggs","",1,4,"3–4"],["yog","Yogurt","g",100,500,"300–500"],["veg","Vegetables","g",100,500,"200–500"]];
 const W=[["gym","Gym",4],["cook","Cooking (one day includes work food)",3],["wash","Laundry",1],["mop","Mopping",1],["iron","Ironing",1],["shop","Supermarket",1],["soc","Social activity",1]];
-const O=[["Meat 200 g","Rice or pasta 1,020 g"],["Meat 200 g","Buckwheat, potatoes or sweet potatoes 1,425 g"],["Legumes 600 g","Rice or pasta 600 g"],["Legumes 600 g","Buckwheat, potatoes or sweet potatoes 835 g"]];
+const O=[["Rice & Meat","Rice or pasta 400 g","Meat 200 g"],["Potatoes & Meat","Potatoes, boiled or baked 650 g","Meat 200 g"],["Lentils & Bread","Lentils, cooked 600 g","Bread 75 g"]];
 const K0="Meat,Liver,Fish,Eggs,Milk,Cheese,Yogurt,Bread,Rice,Pasta,Potatoes,Buckwheat,Legumes,Vegetables,Fruits".split(",").map(n=>({n,h:1}));
 const S0=["Not a lot of screen time","Prioritize social time and vacations over the job, so you have a good mood during work","Do something that scares you every day. Fear is my personal guide into freedom.","Friends are brothers: want the best for them, so they can motivate you to become your best self. Better friends = better you.","Have good posture","No matter what, never let yourself feel like a victim","You are the people who surround you","Invest in yourself","Difficulties are opportunities: in every situation ask what you can gain from this and how to turn it to your advantage"];
 const C0=[["Low energy","Go for a run, then take a shower"],["Bored","Go outside, ride my bike and drink coffee"],["I feel like others judge me","Do what I think they won’t approve"]];
 let D=null,tab="t",rt="s",cur=T(),cm=null;try{D=JSON.parse(localStorage.getItem("ha1"))}catch(e){}
-D=D||{d:{},w:{},k:K0,s:S0,c:C0};
+D=D||{d:{},w:{},k:K0,s:S0,c:C0,td:{d:[],m:[]}};
 const S=()=>{try{localStorage.setItem("ha1",JSON.stringify(D))}catch(e){}};
-const day=k=>D.d[k]||(D.d[k]={g:["","",""],goals:["","",""],h:{},c:{},cmb:-1,t:[0,0,0],gd:[0,0,0],r:"",x:""});
+const day=k=>D.d[k]||(D.d[k]={g:["","",""],goals:["","","",""],h:{},c:{},cmb:-1,t:[0,0,0],gd:[0,0,0,0],r:"",x:""});
 function streak(){let n=0,d=new Date();const ok=k=>D.d[k]&&H.every(h=>D.d[k].h[h[0]]);if(!ok(dk(d)))d.setDate(d.getDate()-1);while(ok(dk(d))){n++;d.setDate(d.getDate()-1)}return n}
-const goalsRow=d=>["Mental","Physical","Business"].map((l,i)=>`<div class="r"><button class="ck ${d.gd[i]?"on":""}" data-a="gd" data-n="${i}">${d.gd[i]?"✓":""}</button><span class="m" style="width:64px">${l}</span><span>${esc(d.goals[i])||"<span class=m>not set</span>"}</span></div>`).join("");
+const goalsRow=d=>["Mental","Physical","Business","Bonus"].map((l,i)=>`<div class="r"><button class="ck ${d.gd[i]?"on":""}" data-a="gd" data-n="${i}">${d.gd[i]?"✓":""}</button><span class="m" style="width:64px">${l}</span><span>${esc(d.goals[i]||"")||"<span class=m>not set</span>"}${d.cn&&d.cn[i]>1?` <b style="color:#f5c542">Day ${d.cn[i]}</b>`:""}</span></div>`).join("");
+const TD=()=>D.td||(D.td={d:[],m:[]});
+function carry(k){const d=D.d[k],n=day(add(k,1));if(!d)return;for(let i=0;i<4;i++){const g=d.goals[i];if(g&&!d.gd[i]){if(!n.goals[i]){n.goals[i]=g;n.cn=n.cn||[1,1,1,1];n.cn[i]=((d.cn||[])[i]||1)+1;n.au=n.au||[];n.au[i]=1}}else if(n.au&&n.au[i]&&n.goals[i]===g){n.goals[i]="";n.au[i]=0;n.cn[i]=1}}}
+const chart=()=>{const t=T(),a=[];for(let i=29;i>=0;i--)a.push(ds(add(t,-i)));const w=10;return`<div class="card"><h2>Day scores, last 30 days</h2><svg viewBox="0 0 300 90" width="100%" role="img" aria-label="Day scores for the last 30 days"><line x1="0" y1="80" x2="300" y2="80" stroke="#262626"/>${a.map((v,i)=>`<rect x="${i*w+1}" y="${80-v*76}" width="${w-2}" height="${Math.max(1,v*76)}" rx="1.5" fill="${v>.999?"#f5c542":"#5DCAA5"}"/>`).join("")}</svg><p class="m">Gold bar = ★ day. Average: ${pct(a.reduce((x,y)=>x+y,0)/30)}</p></div>`};
+const rv=()=>{const m=mon(cur),w=D.w[m]||{},t=T(),wr=[],dd=[];for(let i=0;i<7;i++){const k=add(m,i);dd.push(k<=t?ds(k):null);const d=D.d[k];if(d&&d.x)wr.push(k.slice(5)+": "+esc(d.x))}
+const[y,mo]=cm;let best="",worst="",bs=-1,lo=2;for(let q=mon(dk(new Date(y,mo,1)));q<=dk(new Date(y,mo+1,0))&&q<=t;q=add(q,7)){const v=ws(q);if(v>bs){bs=v;best=q}if(v<lo){lo=v;worst=q}}
+return`<div class="card"><h2>Weekly review, week of ${m}</h2><p>Week score ${pct(ws(m))}<br><span class="m">Days: ${dd.map(v=>v==null?"–":pct(v)).join(" · ")}</span></p>${W.map(x=>`<div class="r"><span>${x[1]}</span><span class="sp">${w[x[0]]||0} / ${x[2]}</span></div>`).join("")}<h2 style="margin-top:8px">What went wrong</h2>${wr.length?wr.map(z=>`<div>${z}</div>`).join(""):`<p class="m">Nothing written.</p>`}</div><div class="card"><h2>Monthly review, ${new Date(y,mo,1).toLocaleDateString("en-GB",{month:"long",year:"numeric"})}</h2><p>Month score ${pct(ms(y,mo))}</p>${best?`<div>Best week: ${best} (${pct(bs)})</div><div>Worst week: ${worst} (${pct(lo)})</div>`:`<p class="m">No weeks yet.</p>`}</div>`};
 const V={
 t(){const d=day(cur),w=D.w[wk()]||{};
 return`${nav()}<p class="sub">${sc()}</p>
@@ -49,22 +55,24 @@ return`${nav()}<p class="sub">${sc()}</p>
 <div class="card"><h2>Today’s goals</h2>${goalsRow(d)}</div>
 <div class="card"><h2>Habits (tap again to skip, once more to clear)</h2>${H.map(h=>{const v=d.h[h[0]]||0;return`<div class="r"><button class="ck ${v==1?"on":""}" data-a="h" data-s="${h[0]}">${v==1?"✓":v==2?"–":""}</button><span class="${v==2?"m":""}">${h[1]}</span></div>`}).join("")}</div>
 <div class="card"><h2>Counters</h2>${C.map(c=>{const v=d.c[c[0]]||0;return`<div class="r"><span style="width:84px">${c[1]}</span><div class="bar"><i style="width:${Math.min(100,v/c[4]*100)}%"></i></div><span class="m" style="width:92px;text-align:right">${v} / ${c[5]} ${c[2]}</span><button data-a="c" data-s="${c[0]}" data-n="-1">−</button><button data-a="c" data-s="${c[0]}" data-n="1">+${c[3]}</button></div>`}).join("")}</div>
-<div class="card"><h2>Today’s food combination (cooked, about 50 g protein and 300 g carbs)</h2><div class="r">${O.map((o,i)=>`<button class="${d.cmb==i?"on":""}" data-a="cmb" data-n="${i}" style="flex:1">${i+1}</button>`).join("")}</div>${d.cmb<0?`<p class="m">Pick one for today.</p>`:[O[d.cmb][0],O[d.cmb][1],"Bread 60 g"].map((p,i)=>`<div class="r"><button class="ck ${d.t[i]?"on":""}" data-a="t" data-n="${i}">${d.t[i]?"✓":""}</button><span>${p}</span></div>`).join("")}</div>
+<div class="card"><h2>Today’s food option (cooked weights)</h2><div class="r">${O.map((o,i)=>`<button class="${d.cmb==i?"on":""}" data-a="cmb" data-n="${i}" style="flex:1;font-size:13px">${o[0]}</button>`).join("")}</div>${!O[d.cmb]?`<p class="m">Pick one for today.</p>`:O[d.cmb].slice(1).map((p,i)=>`<div class="r"><button class="ck ${d.t[i]?"on":""}" data-a="t" data-n="${i}">${d.t[i]?"✓":""}</button><span>${p}</span></div>`).join("")}</div>
 <div class="card"><h2>Weekly goals, week of ${mon(cur)}</h2>${W.map(x=>{const v=w[x[0]]||0;return`<div class="r"><span>${x[1]}</span><span class="sp ${v>=x[2]?"":"m"}">${v} / ${x[2]}</span><button data-a="w" data-s="${x[0]}" data-n="-1">−</button><button data-a="w" data-s="${x[0]}" data-n="1">+1</button></div>`}).join("")}</div>`},
-e(){const d=day(cur),n=day(tom());
+e(){const d=day(cur),n=day(tom());carry(cur);
 return`${nav()}<p class="sub">Evening review. Saved as you type.</p><div class="card"><h2>Today’s goals</h2>${goalsRow(d)}</div>
 <div class="card"><h2>What did I do right?</h2><textarea rows="3" data-i="r">${esc(d.r)}</textarea></div>
 <div class="card"><h2>What did I do wrong?</h2><textarea rows="3" data-i="x">${esc(d.x)}</textarea></div>
-<div class="card"><h2>Tomorrow’s goals</h2>${["Mental","Physical","Business"].map((l,i)=>`<input data-i="nx" data-n="${i}" placeholder="${l} goal" value="${esc(n.goals[i])}">`).join("")}</div>`},
+<div class="card"><h2>Tomorrow’s goals</h2>${["Mental","Physical","Business","Bonus"].map((l,i)=>`<input data-i="nx" data-n="${i}" placeholder="${l} goal" value="${esc(n.goals[i]||"")}">${n.cn&&n.cn[i]>1?`<div class="m">Day ${n.cn[i]} for this goal</div>`:""}`).join("")}</div>`},
 h(){const ks=Object.keys(D.d).sort().reverse().filter(k=>D.d[k].r||D.d[k].x||D.d[k].g.some(Boolean)||Object.keys(D.d[k].h).length);
-return`<h1>History</h1><p class="sub">Streak: ${streak()} days. A ★ means everything was done that day. Tap a day to open it.</p>${cal()}${ks.map(k=>{const d=D.d[k],n=H.filter(h=>d.h[h[0]]==1).length;return`<div class="card"><h2>${k}. Habits ${n} / ${H.length}${d.cmb>=0?". Combination "+(d.cmb+1):""}</h2>${d.g.some(Boolean)?`<div class="m">Grateful: ${d.g.filter(Boolean).map(esc).join("; ")}</div>`:""}${d.r?`<div>Right: ${esc(d.r)}</div>`:""}${d.x?`<div>Wrong: ${esc(d.x)}</div>`:""}</div>`}).join("")||`<p class="m">Nothing yet. Your days will appear here.</p>`}
+return`<h1>History</h1><p class="sub">Streak: ${streak()} days. A ★ means everything was done that day. Tap a day to open it.</p>${chart()}${cal()}${rv()}${ks.map(k=>{const d=D.d[k],n=H.filter(h=>d.h[h[0]]==1).length;return`<div class="card"><h2>${k}. Habits ${n} / ${H.length}${d.cmb>=0?". Combination "+(d.cmb+1):""}</h2>${d.g.some(Boolean)?`<div class="m">Grateful: ${d.g.filter(Boolean).map(esc).join("; ")}</div>`:""}${d.r?`<div>Right: ${esc(d.r)}</div>`:""}${d.x?`<div>Wrong: ${esc(d.x)}</div>`:""}</div>`}).join("")||`<p class="m">Nothing yet. Your days will appear here.</p>`}
 <div class="card"><h2>Backup</h2><p class="m">Export fills the box with your data. Copy it somewhere safe. To restore, paste it here and tap Import.</p><textarea id="bk" rows="3"></textarea><div class="r"><button data-a="ex">Export</button><button data-a="im">Import</button></div></div>`},
+o(){const t=TD(),sec=(k,l)=>{const L=t[k],ix=f=>L.map((x,i)=>[x,i]).filter(a=>f?a[0].f:!a[0].f),dn=ix(1);return`<div class="card"><h2>${l}</h2>${ix(0).map(a=>`<div class="r"><button class="ck" data-a="td" data-s="${k}" data-n="${a[1]}"></button><span>${esc(a[0].t)}</span><span class="sp"><button class="x" data-a="tu" data-s="${k}" data-n="${a[1]}">▲</button><button class="x" data-a="tv" data-s="${k}" data-n="${a[1]}">▼</button><button class="x" data-a="tx" data-s="${k}" data-n="${a[1]}">✕</button></span></div>`).join("")||`<p class="m">Nothing to do.</p>`}<input id="ti${k}" placeholder="Add a task"><button data-a="ta" data-s="${k}">Add</button>${dn.length?`<h2 style="margin-top:12px">Finished</h2>`+dn.map(a=>`<div class="r"><button class="ck on" data-a="td" data-s="${k}" data-n="${a[1]}">✓</button><span class="m"><s>${esc(a[0].t)}</s> · ${a[0].f}</span><button class="x sp" data-a="tx" data-s="${k}" data-n="${a[1]}">✕</button></div>`).join(""):""}</div>`};
+return`<h1>To-do</h1><p class="sub">Highest priority first. Use ▲ ▼ to reorder. Tick a task to finish it; untick it in Finished to bring it back.</p>`+sec("d","Next days")+sec("m","Next months")},
 k(){const miss=D.k.map((x,i)=>[x,i]).filter(a=>!a[0].h);
 return`<h1>Kitchen</h1><p class="sub">Tap an item to mark it missing. Missing items appear in your shopping list.</p>
 <div class="card"><h2>Shopping list</h2>${miss.length?miss.map(a=>`<div class="r"><span>${esc(a[0].n)}</span><button class="sp" data-a="hv" data-n="${a[1]}">Bought</button></div>`).join(""):`<p class="m">Nothing missing.</p>`}</div>
 <div class="card"><h2>Kitchen staples</h2>${D.k.map((x,i)=>`<div class="r"><button class="ck ${x.h?"on":""}" data-a="hv" data-n="${i}">${x.h?"✓":""}</button><span class="${x.h?"":"m"}">${esc(x.n)}</span><button class="x sp" data-a="kd" data-n="${i}">✕</button></div>`).join("")}<input id="ki" placeholder="Add a staple"><button data-a="ka">Add</button></div>`},
 r(){return`<h1>Rules</h1><div class="r" style="margin:8px 0"><button class="${rt=="s"?"on":""}" data-a="rt" data-s="s" style="flex:1">Suggestions</button><button class="${rt=="c"?"on":""}" data-a="rt" data-s="c" style="flex:1">Challenges</button></div>`+(rt=="s"?`<div class="card">${D.s.map((s,i)=>`<div class="r"><span>${esc(s)}</span><button class="x sp" data-a="sd" data-n="${i}">✕</button></div>`).join("")}<input id="si" placeholder="Add a suggestion"><button data-a="sa">Add</button></div>`:`<div class="card">${D.c.map((c,i)=>`<div class="r"><span><b>${esc(c[0])}</b><br><span class="m">${esc(c[1])}</span></span><button class="x sp" data-a="cd" data-n="${i}">✕</button></div>`).join("")}<input id="c1" placeholder="Challenge"><input id="c2" placeholder="How I overcome it"><button data-a="ca">Add</button></div>`)}};
-const NV=[["t","Today"],["e","Evening"],["h","History"],["k","Kitchen"],["r","Rules"]];
+const NV=[["t","Today"],["e","Evening"],["o","To-do"],["h","History"],["k","Kitchen"],["r","Rules"]];
 function R(){$("#v").innerHTML=V[tab]();$("#n").innerHTML=NV.map(a=>`<button class="${tab==a[0]?"on":""}" data-a="tab" data-s="${a[0]}">${a[1]}</button>`).join("")}
 onclick=e=>{const b=e.target.closest("[data-a]");if(!b)return;const a=b.dataset.a,n=+b.dataset.n,s=b.dataset.s,d=day(cur);
 if(a=="tab"){tab=s;scrollTo(0,0)}
@@ -72,12 +80,16 @@ else if(a=="dy")cur=add(cur,n);
 else if(a=="go"){cur=s;tab="t";scrollTo(0,0)}
 else if(a=="cm")cm=[cm[0]+Math.floor((cm[1]+n)/12),(cm[1]+n+12)%12];
 else if(a=="h")d.h[s]=((d.h[s]||0)+1)%3;
-else if(a=="gd")d.gd[n]^=1;
+else if(a=="gd"){d.gd[n]^=1;carry(cur)}
 else if(a=="c"){const c=C.find(x=>x[0]==s);d.c[s]=Math.max(0,(d.c[s]||0)+n*c[3])}
 else if(a=="cmb"){d.cmb=n;d.t=[0,0,0]}
 else if(a=="t")d.t[n]^=1;
 else if(a=="w"){const w=D.w[wk()]||(D.w[wk()]={});w[s]=Math.max(0,(w[s]||0)+n)}
 else if(a=="hv")D.k[n].h^=1;
+else if(a=="td"){const L=TD()[s],x=L[n];if(x.f){x.f=0;L.splice(n,1);L.unshift(x)}else x.f=T()}
+else if(a=="ta"){const i=$("#ti"+s);if(i.value.trim())TD()[s].push({t:i.value.trim(),f:0})}
+else if(a=="tx")TD()[s].splice(n,1);
+else if(a=="tu"||a=="tv"){const L=TD()[s],o=L.map((x,i)=>i).filter(i=>!L[i].f),q=o[o.indexOf(n)+(a=="tu"?-1:1)];if(q!=null)[L[n],L[q]]=[L[q],L[n]]}
 else if(a=="kd")D.k.splice(n,1);
 else if(a=="ka"){const i=$("#ki");if(i.value.trim())D.k.push({n:i.value.trim(),h:1})}
 else if(a=="rt")rt=s;
@@ -87,9 +99,9 @@ else if(a=="cd")D.c.splice(n,1);
 else if(a=="ca"){const x=$("#c1"),y=$("#c2");if(x.value.trim())D.c.push([x.value.trim(),y.value.trim()])}
 else if(a=="ex"){$("#bk").value=JSON.stringify(D);return}
 else if(a=="im"){try{const j=JSON.parse($("#bk").value);if(!j.d||!j.k)throw 0;D=j}catch(x){alert("That backup can’t be read. Paste the full exported text.");return}}
-S();R()};
+R();S()};
 oninput=e=>{const t=e.target,i=t.dataset.i;if(!i)return;const d=day(cur);
-if(i=="g")d.g[t.dataset.n]=t.value;else if(i=="r")d.r=t.value;else if(i=="x")d.x=t.value;else if(i=="nx")day(tom()).goals[t.dataset.n]=t.value;
+if(i=="g")d.g[t.dataset.n]=t.value;else if(i=="r")d.r=t.value;else if(i=="x")d.x=t.value;else if(i=="nx"){const nx=day(tom()),j=t.dataset.n;nx.goals[j]=t.value;if(nx.au&&nx.au[j]){nx.au[j]=0;nx.cn[j]=1}}
 S()};
 R();
 </script></body></html>
